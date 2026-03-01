@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CareerAI - Intelligent Career Path Prediction</title>
+  <meta name="description" content="AI-powered career predictions, salary insights, skill gap analysis, and personalized roadmaps" />
+  
+  <!-- Load scripts -->
+  <script src="/scripts.js"></script>
+  
+  <!-- Custom styles for enhanced animations -->
+  <style>
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+    
+    .animate-fadeIn {
+      animation: fadeIn 0.6s ease-out;
+    }
+    
+    .animate-slideIn {
+      animation: slideIn 0.6s ease-out;
+    }
+    
+    .animate-pulse {
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    /* Enhanced scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #5a67d8 0%, #667eea 100%);
+    }
+    
+    /* Selection color */
+    ::selection {
+      background-color: #7c3aed;
+      color: white;
+    }
+    
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* Loading screen */
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease-out;
+    }
+    
+    #loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    /* Enhanced button styles */
+    .enhanced-button {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .enhanced-button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    
+    .enhanced-button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    
+    /* Card hover effects */
+    .card-hover {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
+    /* Result animations */
+    .result-card {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+    
+    .result-card:nth-child(even) {
+      animation-delay: 0.2s;
+    }
+    
+    /* Progress bar animations */
+    .progress-fill {
+      transition: width 1s ease-out;
+    }
+    
+    /* Tooltip styles */
+    .tooltip {
+      position: relative;
+    }
+    
+    .tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f2937;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      margin-bottom: 5px;
+    }
+    
+    .tooltip:hover::after {
+      opacity: 1;
+    }
+    
+    /* Notification styles */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    /* Back to top button */
+    .scroll-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+    
+    .scroll-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .scroll-top:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <!-- Next.js will render here -->
+  </div>
+  
+  <script>
+    // Initialize enhanced features when DOM is ready
+    window.addEventListener('DOMContentLoaded', () => {
+      // Add loading screen
+      const loadingScreen = document.createElement('div');
+      loadingScreen.id = 'loading-screen';
+      loadingScreen.innerHTML = `
+        <div class="text-center">
+          <div class="relative">
+            <div class="w-20 h-20 border-4 border-white/30 rounded-full animate-spin"></div>
+            <div class="absolute top-0 left-0 w-20 h-20 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+            <div class="absolute top-2 left-2 w-16 h-16 border-4 border-purple-200/30 rounded-full animate-spin animation-delay-150"></div>
+            <div class="absolute top-2 left-2 w-16 h-16 border-4 border-purple-300 border-t-transparent rounded-full animate-spin animation-delay-150"></div>
+          </div>
+          <h1 class="text-white text-3xl font-bold mt-8 animate-fade-in">CareerAI</h1>
+          <p class="text-white/80 mt-2 animate-fade-in animation-delay-300">Loading your future...</p>
+        </div>
+      `;
+      
+      document.body.appendChild(loadingScreen);
+      
+      // Remove loading screen after page loads
+      setTimeout(() => {
+        loadingScreen.classList.add('hidden');
+        setTimeout(() => {
+          loadingScreen.remove();
+        }, 500);
+      }, 1500);
+      
+      // Setup back to top button
+      const backToTop = document.createElement('button');
+      backToTop.className = 'scroll-top';
+      backToTop.innerHTML = `
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+        </svg>
+      `;
+      
+      document.body.appendChild(backToTop);
+      
+      // Show/hide back to top button
+      window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      });
+      
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      
+      // Add CSS animation delays
+      const style = document.createElement('style');
+      style.textContent = `
+        .animation-delay-150 {
+          animation-delay: 150ms;
+        }
+        
+        .animation-delay-300 {
+          animation-delay: 300ms;
+        }
+      `;
+      document.head.appendChild(style);
+      
+      // Add scroll progress indicator
+      const progressBar = document.createElement('div');
+      progressBar.className = 'fixed top-0 left-0 w-full h-1 bg-gray-200 z-50';
+      progressBar.innerHTML = `
+        <div class="h-full bg-gradient-to-r from-purple-600 to-indigo-600 transition-all duration-300" style="width: 0%"></div>
+      `;
+      
+      document.body.appendChild(progressBar);
+      
+      window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset;
+        const docHeight = document.body.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        progressBar.querySelector('div').style.width = `${scrollPercent}%`;
+      });
+      
+      // Add keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          // Open search functionality
+          console.log('Search shortcut activated');
+        }
+        
+        if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+          e.preventDefault();
+          // Show help
+          console.log('Help shortcut activated');
+        }
+        
+        if (e.key === 'Escape') {
+          // Close any open modals
+          document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.remove();
+          });
+        }
+      });
+      
+      // Add form enhancements
+      const form = document.querySelector('form');
+      if (form) {
+        const inputs = form.querySelectorAll('input');
+        inputs.forEach(input => {
+          input.addEventListener('focus', () => {
+            input.classList.add('ring-2', 'ring-purple-500');
+          });
+          
+          input.addEventListener('blur', () => {
+            input.classList.remove('ring-2', 'ring-purple-500');
+          });
+        });
+      }
+      
+      console.log('🎨 CareerAI Enhanced Design System Loaded Successfully!');
+    });
+  </script>
+</body>
+</html>

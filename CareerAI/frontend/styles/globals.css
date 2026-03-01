@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS Variables ── */
+:root {
+  --bg:         #080b14;
+  --bg2:        #0d1120;
+  --border:     rgba(255,255,255,0.08);
+  --border-h:   rgba(124,58,237,0.5);
+  --card:       rgba(255,255,255,0.04);
+  --card-h:     rgba(255,255,255,0.08);
+  --text:       #f0f4ff;
+  --text2:      #8b9dc3;
+  --muted:      #4a5a7a;
+  --accent:     #7c3aed;
+  --accent-l:   #a855f7;
+  --green:      #10b981;
+  --blue:       #3b82f6;
+  --pink:       #ec4899;
+}
+
+/* ── Reset / Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--accent); color: #fff; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 99px; }
+
+/* ── Keyframes ── */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes blobDrift {
+  0%   { transform: translate(0,0) scale(1); }
+  100% { transform: translate(40px,-40px) scale(1.08); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity:1; transform:scale(1); }
+  50%       { opacity:.5; transform:scale(.7); }
+}
+
+@keyframes revealUp {
+  from { opacity:0; transform:translateY(30px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── Utility animations ── */
+.animate-spin     { animation: spin 0.85s linear infinite; }
+.animate-fadeIn   { animation: fadeSlideIn 0.6s ease-out both; }
+.animate-revealUp { animation: revealUp 0.7s ease-out both; }
+
+/* ── Gradient text ── */
+.grad-text {
+  background: linear-gradient(135deg, #a78bfa, #f0abfc, #93c5fd);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ── Glassmorphism card ── */
+.glass {
+  background: var(--card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  transition: border-color .3s, box-shadow .3s, transform .3s;
+}
+.glass:hover {
+  border-color: var(--border-h);
+  box-shadow: 0 20px 60px rgba(0,0,0,.35), 0 0 30px rgba(124,58,237,.1);
+  transform: translateY(-5px);
+}
+
+/* ── Tag pills ── */
+.tag { display:inline-block; padding:5px 14px; border-radius:999px; font-size:.8rem; font-weight:500; margin:3px; }
+.tag-purple { background:rgba(124,58,237,.2); color:#c4b5fd; border:1px solid rgba(124,58,237,.3); }
+.tag-red    { background:rgba(239,68,68,.15);  color:#fca5a5; border:1px solid rgba(239,68,68,.25); }
+.tag-amber  { background:rgba(245,158,11,.15); color:#fcd34d; border:1px solid rgba(245,158,11,.25); }
+
+/* ── Scroll-reveal ── */
+.reveal { opacity:0; transform:translateY(32px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
